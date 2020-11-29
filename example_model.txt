@@ -1,0 +1,110 @@
+Model: "sequential_163"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv1d_326 (Conv1D)          (None, 559, 128)          512       
+_________________________________________________________________
+max_pooling1d_326 (MaxPoolin (None, 279, 128)          0         
+_________________________________________________________________
+conv1d_327 (Conv1D)          (None, 277, 128)          49280     
+_________________________________________________________________
+max_pooling1d_327 (MaxPoolin (None, 138, 128)          0         
+_________________________________________________________________
+dropout_163 (Dropout)        (None, 138, 128)          0         
+_________________________________________________________________
+flatten_163 (Flatten)        (None, 17664)             0         
+_________________________________________________________________
+dense_489 (Dense)            (None, 64)                1130560   
+_________________________________________________________________
+dense_490 (Dense)            (None, 32)                2080      
+_________________________________________________________________
+dense_491 (Dense)            (None, 12)                396       
+=================================================================
+Total params: 1,182,828
+Trainable params: 1,182,828
+Non-trainable params: 0
+_________________________________________________________________
+3162/3162 - 1s - loss: 2.4782 - accuracy: 0.1584
+Test label: STANDING
+Predicted label:SITTING
+false
+
+Test label: STANDING
+Predicted label:SITTING
+false
+
+Test label: STANDING
+Predicted label:SITTING
+false
+
+Test label: STANDING
+Predicted label:SITTING
+false
+
+Test label: STANDING
+Predicted label:SITTING
+false
+
+Test label: STANDING
+Predicted label:SITTING
+false
+
+Test label: STANDING
+Predicted label:SITTING
+false
+
+Test label: STANDING
+Predicted label:SITTING
+false
+
+Test label: STANDING
+Predicted label:SITTING
+false
+
+Test label: STANDING
+Predicted label:SITTING
+false
+
+False predictions:10
+True predictions:0
+Prediction accuraccy for first 25 values: 0.0
+Train on 7767 samples, validate on 3162 samples
+Epoch 1/15
+7767/7767 [==============================] - 11s 1ms/sample - loss: 0.9307 - accuracy: 0.6705 - val_loss: 0.6569 - val_accuracy: 0.7732
+Epoch 2/15
+7767/7767 [==============================] - 11s 1ms/sample - loss: 0.5707 - accuracy: 0.7919 - val_loss: 0.5929 - val_accuracy: 0.7989
+Epoch 3/15
+7767/7767 [==============================] - 11s 1ms/sample - loss: 0.5028 - accuracy: 0.8152 - val_loss: 0.5708 - val_accuracy: 0.8042
+Epoch 4/15
+7767/7767 [==============================] - 11s 1ms/sample - loss: 0.4834 - accuracy: 0.8191 - val_loss: 0.6174 - val_accuracy: 0.7818
+Epoch 5/15
+7767/7767 [==============================] - 10s 1ms/sample - loss: 0.4634 - accuracy: 0.8263 - val_loss: 0.5749 - val_accuracy: 0.8106
+Epoch 6/15
+7767/7767 [==============================] - 10s 1ms/sample - loss: 0.4535 - accuracy: 0.8276 - val_loss: 0.5695 - val_accuracy: 0.7976
+Epoch 7/15
+7767/7767 [==============================] - 11s 1ms/sample - loss: 0.4456 - accuracy: 0.8310 - val_loss: 0.5803 - val_accuracy: 0.8046
+Epoch 8/15
+7767/7767 [==============================] - 10s 1ms/sample - loss: 0.4344 - accuracy: 0.8330 - val_loss: 0.6647 - val_accuracy: 0.7998
+Epoch 9/15
+7767/7767 [==============================] - 10s 1ms/sample - loss: 0.4295 - accuracy: 0.8357 - val_loss: 0.6296 - val_accuracy: 0.8061
+Epoch 10/15
+7767/7767 [==============================] - 10s 1ms/sample - loss: 0.4222 - accuracy: 0.8352 - val_loss: 0.5950 - val_accuracy: 0.8017
+Epoch 11/15
+7767/7767 [==============================] - 11s 1ms/sample - loss: 0.4215 - accuracy: 0.8371 - val_loss: 0.6098 - val_accuracy: 0.8008
+Epoch 12/15
+7767/7767 [==============================] - 11s 1ms/sample - loss: 0.4164 - accuracy: 0.8394 - val_loss: 0.5603 - val_accuracy: 0.8087
+Epoch 13/15
+7767/7767 [==============================] - 11s 1ms/sample - loss: 0.4110 - accuracy: 0.8384 - val_loss: 0.6496 - val_accuracy: 0.7894
+Epoch 14/15
+7767/7767 [==============================] - 11s 1ms/sample - loss: 0.4114 - accuracy: 0.8418 - val_loss: 0.5886 - val_accuracy: 0.7995
+Epoch 15/15
+7767/7767 [==============================] - 11s 1ms/sample - loss: 0.4144 - accuracy: 0.8373 - val_loss: 0.5761 - val_accuracy: 0.8090
+3162/3162 - 1s - loss: 0.5761 - accuracy: 0.8090
+WARNING:tensorflow:AutoGraph could not transform <function canonicalize_signatures.<locals>.signature_wrapper at 0x00000223D4027A68> and will run it as-is.
+Please report this to the TensorFlow team. When filing the bug, set the verbosity to 10 (on Linux, `export AUTOGRAPH_VERBOSITY=10`) and attach the full output.
+Cause: Bad argument number for Name: 3, expecting 4
+WARNING: AutoGraph could not transform <function canonicalize_signatures.<locals>.signature_wrapper at 0x00000223D4027A68> and will run it as-is.
+Please report this to the TensorFlow team. When filing the bug, set the verbosity to 10 (on Linux, `export AUTOGRAPH_VERBOSITY=10`) and attach the full output.
+Cause: Bad argument number for Name: 3, expecting 4
+INFO:tensorflow:Assets written to: saved_models\filters-128_kernel_size-3_dropout-0.4_epochs-15_it-10\assets
+(0.5761045732598452, 0.80898166, 160.5352885723114)
