@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[8]:
+# In[1]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 
-# In[9]:
+# In[2]:
 
 
 import tensorflow as tf
@@ -25,7 +25,7 @@ import pickle
 import datetime
 
 
-# In[10]:
+# In[3]:
 
 
 #this stuff was added to invidual classses and functions that needed it
@@ -36,19 +36,21 @@ import datetime
 #print(activity_labels)
 
 
-# In[11]:
+# In[4]:
 
 
 try:
-    from google.colab import drive
-    drive.mount('/content/gdrive/')
-    google = True
-    colab_folder = '/content/gdrive/My Drive/Colab Notebooks/ecps205_final_project/'
+  from google.colab import drive
+  drive.mount('/content/gdrive/')
+
+  colab_folder = '/content/gdrive/My Drive/Colab Notebooks/ecps205_final_project/'
 except:
-    colab_folder=''
+  colab_folder=''
 
 
-# In[12]:
+# **Data Processesing**
+
+# In[5]:
 
 
 #load data
@@ -77,15 +79,11 @@ train_data = np.expand_dims(train_data, axis=2)
 test_data = np.expand_dims(test_data, axis=2)
 
 print('adjusting labels...')
-#print(train_labels)
-#print(test_labels)
 train_labels = adjust_labels(train_labels);
 test_labels = adjust_labels(test_labels);
-#print(train_labels)
-#print(test_labels)
 
 
-# In[13]:
+# In[6]:
 
 
 #takes an array of data as an input
@@ -122,7 +120,7 @@ class PlotData():
         plt.show()
 
 
-# In[14]:
+# In[7]:
 
 
 p_train = PlotData(train_data, train_labels, varname.nameof(train_data))
@@ -141,6 +139,8 @@ p_train.plot_data(2260, save=True)
 #p_test = PlotData(test_data, test_labels)
 #p_test.plot_data(500)
 
+
+# **CNN - 1D Model**
 
 # In[8]:
 
@@ -260,7 +260,9 @@ def run_model(test_data, test_labels, train_data, train_labels, filters, kernel_
 #run_model(test_data, test_labels, train_data, train_labels, filters=32, kernel_size=3, dropout=0.5, dense=128, epochs=3, it='', show_predict=False, save_model=False)
 
 
-# In[12]:
+# **Tester**
+
+# In[97]:
 
 
 def time_unit_string(time):
@@ -269,13 +271,14 @@ def time_unit_string(time):
 class RunTests: 
     #init the default model parameters
     #n_tests is the number of tests to run for each parameter
-    def __init__(self, n_tests, d_filters, d_kernel_size, d_dropout, d_dense, d_epochs):
+    def __init__(self, n_tests, d_filters, d_kernel_size, d_dropout, d_dense, d_epochs, d_name):
         self.n_tests = n_tests
         self.d_filters = d_filters
         self.d_kernel_size = d_kernel_size
         self.d_dropout = d_dropout
         self.d_epochs = d_epochs
-        self.d_dense = d_dense    
+        self.d_dense = d_dense
+        self.d_name = d_name
         
     #tests a specific parameter n_tests number of times
     #the parameter should be specified as a list, see examples below
@@ -319,7 +322,7 @@ class RunTests:
         else:
             print('no data type selected, running default...')
             data = [1]
-            data_type = 'default'
+            data_type = 'default' 
             kernel_size = self.d_kernel_size
             dropout=self.d_dropout
             epochs=self.d_epochs
@@ -384,10 +387,94 @@ class RunTests:
         if save:
             #write the output to a json
             curr_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            save_name = f'{data_type}_{"-".join(str(d) for d in data)}_{curr_time}.pickle'
+            save_name = f'{self.d_name}_{data_type}_{"-".join(str(d) for d in data)}_{curr_time}.pickle'
             pickle.dump(model_test_data, open(f'{colab_folder}saved_data/{save_name}',"wb"))
             
         return model_test_data
+
+
+# **Model Optimization Testing**
+# (only run these if there is no data in the saved_data folder)
+
+# In[103]:
+
+
+runner = RunTests(n_tests = 10,
+                  d_epochs = 10,
+                  d_filters = 64,
+                  d_kernel_size=3,
+                  d_dense=128,
+                  d_dropout=0.5,
+                  d_name='test')
+
+
+# In[89]:
+
+
+#test default parameters as defined when intilizing runner
+default_data = runner.test_param()
+
+
+# In[15]:
+
+
+#testing different filter amounts
+filters_data = runner.test_param(filters=[32, 64, 128])
+
+
+# In[16]:
+
+
+#test different amounts of dropout
+dropout_data = runner.test_param(dropout = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7])
+
+
+# In[17]:
+
+
+#test different kernel sizes
+kernel_size_data = runner.test_param(kernel_size = [3,5,7,9,11])
+
+
+# In[18]:
+
+
+dense_data=runner.test_param(dense=[64,128, 256, 512])
+
+
+# In[92]:
+
+
+#test different amounts of epochs
+epoch_runner = RunTests(n_tests = 1,
+                            d_filters = 256,
+                            d_kernel_size=7,
+                            d_dropout=0.4,
+                            d_dense=256,
+                            d_epochs = 100,
+                            d_name='Epochs') 
+epoch_data = epoch_runner.test_param()
+
+
+# In[99]:
+
+
+#best optimized model
+optimized_runner = RunTests(n_tests = 10,
+                            d_filters = 256,
+                            d_kernel_size=7,
+                            d_dropout=0.4,
+                            d_dense=256,
+                            d_epochs = 10,
+                            d_name = 'optimized')
+opt_data = optimized_runner.test_param()
+
+
+# **Data Visulization**
+
+# In[125]:
+
+
 
 class GenerateResults:
     #data is a two-dimensional list
@@ -412,10 +499,13 @@ class GenerateResults:
 
     
     #plot results in a box-whisker plot to see average, max, min, etc.
-    def plot_results(data, data_type):
+    def plot_results(data, data_type, save_name=False):
         loss=[]
         acc=[]
         param=[]
+
+        xlabel = data_type.split(' ')[1]
+
         for index, test in enumerate(data):
             param.append(test[0].get('test parameter'))
             loss.append([])
@@ -426,137 +516,68 @@ class GenerateResults:
         
         fig, axs = plt.subplots(2,figsize=(10,10))
         axs[0].set_title(f'{data_type} loss')
-        axs[0].set(xlabel=data_type, ylabel='Loss')
+        axs[0].set(xlabel=xlabel, ylabel='Loss')
         axs[0].boxplot(loss, showmeans=True, meanline=True)
         axs[0].set_xticklabels(param)
         axs[0].set_ylim([0,2])
         axs[0].grid()
         
         axs[1].set_title(f'{data_type} accuracy')
-        axs[1].set(xlabel=data_type, ylabel='Accuracy')
+        axs[1].set(xlabel=xlabel, ylabel='Accuracy')
         axs[1].boxplot(acc, showmeans=True, meanline=True)
         axs[1].set_xticklabels(param)
         axs[1].set_ylim([0,1])
         axs[1].grid()
         
-        fig.subplots_adjust(hspace=0.5)        
+        fig.subplots_adjust(hspace=0.5)
+        if save_name:
+          plt.savefig(f"{colab_folder}plots/{save_name}.png")
+
         plt.show
     
-    def plot_histogram(data, data_type):
+    def plot_histogram(history, data_type, save_name=False):
+        n_epochs=len(history['loss']) #number of epochs
         fig, axs = plt.subplots(2,figsize=(10,10))
+
         axs[0].set_title(f'{data_type} loss')
-        axs[0].plot(data[0][0].get('history')['loss'])
-        axs[0].plot(data[0][0].get('history')['val_loss'])
+        axs[0].plot(history.get('loss'), 'r-',label='loss')
+        axs[0].plot(history.get('val_loss'), 'b-', label='val_loss')
+        axs[0].set(xlabel='Epochs', ylabel='Loss')
         axs[0].grid()
+        axs[0].legend()
+        axs[0].set_xlim(left=0, right=n_epochs)
         
         axs[1].set_title(f'{data_type} accuracy')
-        axs[1].plot(data[0][0].get('history')['accuracy'])
-        axs[1].plot(data[0][0].get('history')['val_accuracy'])
+        axs[1].plot(history.get('accuracy'), 'r-', label='accuracy')
+        axs[1].plot(history.get('val_accuracy'), 'b-', label='val_accuracy')
+        axs[1].set(xlabel='Epochs', ylabel='Accuracy')
         axs[1].grid()
+        axs[1].legend()
+        axs[1].set_xlim(left=0, right=n_epochs)
+
         fig.subplots_adjust(hspace=0.5)
-        plt.show
+
+        if save_name:
+          plt.savefig(f"{colab_folder}plots/{save_name}.png")
+        plt.show()
 
 
-# In[13]:
+# In[126]:
 
 
-runner = RunTests(n_tests = 10,
-                  d_epochs = 10,
-                  d_filters = 64,
-                  d_kernel_size=3,
-                  d_dense=128,
-                  d_dropout=0.5)
-
-
-# In[14]:
-
-
-#test default parameters as defined when intilizing runner
-default_data = runner.test_param()
-
-
-# In[15]:
-
-
-#testing different filter amounts
-filters_data = runner.test_param(filters=[32, 64, 128])
-
-
-# In[ ]:
-
-
-#test different amounts of dropout
-dropout_data = runner.test_param(dropout = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7])
-
-
-# In[ ]:
-
-
-#test different kernel sizes
-kernel_size_data = runner.test_param(kernel_size = [3,5,7,9,11])
-
-
-# In[ ]:
-
-
-dense_data=runner.test_param(dense=[64,128, 256, 512])
-
-
-# In[ ]:
-
+#print out plots and results
+g = GenerateResults
 
 current_directory = colab_folder
 json_files = os.listdir(os.path.join(current_directory,'saved_data'))
-g = GenerateResults
 for f in json_files:
     imported_data = pickle.load(open(f'{colab_folder}saved_data/' + f, 'rb'))
     imported_data_name = ''.join(f.split(".")[0:-1])
-    print(imported_data_name)
-    g.plot_results(imported_data, imported_data_name)
-    plt.savefig(f"{colab_folder}plots/{imported_data_name}.png")
 
-
-# In[ ]:
-
-
-#test different amounts of epochs
-epoch_runner = RunTests(n_tests = 1,
-                            d_filters = 32,
-                            d_kernel_size=3,
-                            d_dropout=0.5,
-                            d_dense=128,
-                            d_epochs = 100) 
-epoch_data = epoch_runner.test_param()
-
-
-# In[ ]:
-
-
-#best optimized model
-optimized_runner = RunTests(n_tests = 10,
-                            d_filters = 32,
-                            d_kernel_size=3,
-                            d_dropout=0.4,
-                            d_dense=128,
-                            d_epochs = 15) 
-
-
-# In[ ]:
-
-
-opt_data = optimized_runner.test_param()
-
-
-# In[ ]:
-
-
-optimized_runner.print_results(opt_data, 'Optimized Model')
-optimized_runner.plot_results(opt_data, 'Optimized Model')
-plt.savefig(f'{colab_folder}plots/optimized_model-f128-ks3-do0.4-dns128-epch15.png')
-
-
-# In[ ]:
-
-
-#loss, acc, time = run_model(test_data, test_labels, train_data, train_labels, filters=128, kernel_size=3, dropout=0.4, epochs=15, show_predict=True, it=10, save_model=False)
+    if 'epoch' in f or 'Epochs' in f:
+      g.plot_histogram(imported_data[0][0].get('history'), 'Epochs', save_name=imported_data_name)
+    else:
+      display_name= ' '.join(imported_data_name.split('_')[0:2])
+      g.plot_results(imported_data, display_name, save_name=imported_data_name)
+      #g.print_results(imported_data, display_name)
 
